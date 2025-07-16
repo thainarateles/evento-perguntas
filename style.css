@@ -1,0 +1,28 @@
+body {
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.header {
+  background: linear-gradient(90deg, #5fc9f3, #d65fbd);
+  color: white;
+  text-align: center;
+  padding: 40px 10px;
+  margin-bottom: 30px;
+}
+
+.card {
+  border-radius: 12px;
+  border: none;
+}
+
+.destacada {
+  background-color: #ffeeba !important;
+  font-weight: bold;
+}
+
+.fw-bold.text-primary {
+  background-color: #f0f8ff;
+  border-left: 4px solid #0d6efd;
+  padding-left: 8px;
+}
