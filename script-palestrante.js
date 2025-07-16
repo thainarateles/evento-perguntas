@@ -1,46 +1,66 @@
 const lista = document.getElementById('lista-palestrante');
 const limparBtn = document.getElementById('limpar');
+const destaqueBox = document.getElementById('destaque-box');
+const formId = document.getElementById('form-identificacao');
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxOamNO8FOf6EedVU_SIL15LosL699YOfGH7--Ww8HzanUY_2vKNmFcjTn666SIoVOU6Q/exec';
 
-let ultimoEstado = null; // agora usamos null para garantir atualização inicial
+formId.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const titulo = document.getElementById('titulo-palestra').value;
+  const palestrante = document.getElementById('nome-palestrante').value;
+  await fetch(scriptURL + `?titulo=${encodeURIComponent(titulo)}&palestrante=${encodeURIComponent(palestrante)}`);
+});
 
 async function carregarPerguntas() {
-  const res = await fetch(scriptURL);
-  const data = await res.json();
+  try {
+    const res = await fetch(scriptURL);
+    const data = await res.json();
 
-  const novoEstado = JSON.stringify(data.perguntas);
-  if (novoEstado !== ultimoEstado || ultimoEstado === null) {
-    ultimoEstado = novoEstado;
     lista.innerHTML = '';
+    destaqueBox.innerHTML = '';
 
     data.perguntas.forEach((p, i) => {
+      if (p.destaque === 'true') {
+        destaqueBox.innerHTML = `
+          <div class="alert alert-warning">
+            <strong>${p.nome} pergunta:</strong> ${p.pergunta}
+          </div>
+        `;
+      }
+
       const li = document.createElement('li');
-      li.className = 'list-group-item d-flex justify-content-between align-items-center';
-
-      const destaqueClass = p.destaque === 'true' ? 'fw-bold text-primary' : '';
-
+      li.className = 'list-group-item d-flex justify-content-between align-items-start flex-column';
       li.innerHTML = `
-        <span class="${destaqueClass}">
-          <strong>${p.nome}:</strong> ${p.pergunta}
-        </span>
-        <button class="btn btn-outline-warning btn-sm" onclick="destacarPergunta(${i})">Destacar</button>
+        <div class="w-100 mb-2"><strong>${p.nome}:</strong> ${p.pergunta}</div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-warning" onclick="destacarPergunta(${i})">Destacar</button>
+          <button class="btn btn-sm btn-outline-success" onclick="responderPergunta(${i})">Respondido</button>
+        </div>
       `;
       lista.appendChild(li);
     });
+  } catch (e) {
+    console.error('Erro ao carregar perguntas', e);
   }
 }
 
 async function destacarPergunta(index) {
   await fetch(scriptURL + '?destacar=' + index);
-  await carregarPerguntas();
+  carregarPerguntas();
+}
+
+async function responderPergunta(index) {
+  await fetch(scriptURL + '?responder=' + index);
+  carregarPerguntas();
 }
 
 limparBtn.addEventListener('click', async () => {
   if (confirm('Tem certeza que deseja apagar todas as perguntas?')) {
     await fetch(scriptURL + '?limpar=true');
-    await carregarPerguntas();
+    carregarPerguntas();
   }
 });
 
-setInterval(carregarPerguntas, 1000);
-carregarPerguntas(); // força carregamento na abertura da página
+setInterval(carregarPerguntas, 2000);
+carregarPerguntas();
+
