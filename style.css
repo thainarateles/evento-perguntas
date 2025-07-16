@@ -26,3 +26,30 @@ body {
   border-left: 4px solid #0d6efd;
   padding-left: 8px;
 }
+
+/* Novo estilo para pergunta destacada no topo */
+.pergunta-destaque {
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border: none;
+}
+
+.pergunta-destaque h4 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.pergunta-destaque p {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.pergunta-destaque .btn {
+  margin-top: 15px;
+}

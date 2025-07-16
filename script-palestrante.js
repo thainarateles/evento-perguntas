@@ -1,66 +1,107 @@
 const lista = document.getElementById('lista-palestrante');
 const limparBtn = document.getElementById('limpar');
-const destaqueBox = document.getElementById('destaque-box');
-const formId = document.getElementById('form-identificacao');
+const perguntaDestaqueContainer = document.getElementById('pergunta-destaque-container');
+const perguntaDestaquTexto = document.getElementById('pergunta-destaque-texto');
+const btnRemoverDestaque = document.getElementById('btn-remover-destaque');
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxOamNO8FOf6EedVU_SIL15LosL699YOfGH7--Ww8HzanUY_2vKNmFcjTn666SIoVOU6Q/exec';
 
-formId.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const titulo = document.getElementById('titulo-palestra').value;
-  const palestrante = document.getElementById('nome-palestrante').value;
-  await fetch(scriptURL + `?titulo=${encodeURIComponent(titulo)}&palestrante=${encodeURIComponent(palestrante)}`);
-});
+let ultimoEstado = null;
+let perguntaDestacada = null;
 
 async function carregarPerguntas() {
   try {
     const res = await fetch(scriptURL);
     const data = await res.json();
 
-    lista.innerHTML = '';
-    destaqueBox.innerHTML = '';
+    const novoEstado = JSON.stringify(data.perguntas);
+    if (novoEstado !== ultimoEstado || ultimoEstado === null) {
+      ultimoEstado = novoEstado;
+      lista.innerHTML = '';
 
-    data.perguntas.forEach((p, i) => {
-      if (p.destaque === 'true') {
-        destaqueBox.innerHTML = `
-          <div class="alert alert-warning">
-            <strong>${p.nome} pergunta:</strong> ${p.pergunta}
-          </div>
-        `;
+      // Procurar por pergunta destacada
+      const perguntaComDestaque = data.perguntas.find(p => p.destaque === 'true');
+      
+      if (perguntaComDestaque) {
+        perguntaDestacada = perguntaComDestaque;
+        perguntaDestaquTexto.innerHTML = `<strong>${perguntaComDestaque.nome}:</strong> ${perguntaComDestaque.pergunta}`;
+        perguntaDestaqueContainer.style.display = 'block';
+      } else {
+        perguntaDestacada = null;
+        perguntaDestaqueContainer.style.display = 'none';
       }
 
-      const li = document.createElement('li');
-      li.className = 'list-group-item d-flex justify-content-between align-items-start flex-column';
-      li.innerHTML = `
-        <div class="w-100 mb-2"><strong>${p.nome}:</strong> ${p.pergunta}</div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-sm btn-outline-warning" onclick="destacarPergunta(${i})">Destacar</button>
-          <button class="btn btn-sm btn-outline-success" onclick="responderPergunta(${i})">Respondido</button>
-        </div>
-      `;
-      lista.appendChild(li);
-    });
-  } catch (e) {
-    console.error('Erro ao carregar perguntas', e);
+      // Mostrar outras perguntas (exceto a destacada)
+      data.perguntas.forEach((p, i) => {
+        if (p.destaque !== 'true') {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+          li.innerHTML = `
+            <span>
+              <strong>${p.nome}:</strong> ${p.pergunta}
+            </span>
+            <div class="btn-group" role="group">
+              <button class="btn btn-outline-warning btn-sm" onclick="destacarPergunta(${i})">Destacar</button>
+              <button class="btn btn-outline-success btn-sm" onclick="removerPergunta(${i})">✓ Respondido</button>
+            </div>
+          `;
+          lista.appendChild(li);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Erro ao carregar perguntas:', error);
   }
 }
 
 async function destacarPergunta(index) {
-  await fetch(scriptURL + '?destacar=' + index);
-  carregarPerguntas();
+  try {
+    await fetch(scriptURL + '?destacar=' + index);
+    carregarPerguntas(); // Sem delay
+  } catch (error) {
+    console.error('Erro ao destacar pergunta:', error);
+  }
 }
 
-async function responderPergunta(index) {
-  await fetch(scriptURL + '?responder=' + index);
-  carregarPerguntas();
+async function removerPergunta(index) {
+  try {
+    await fetch(scriptURL + '?remover=' + index);
+    carregarPerguntas(); // Sem delay
+  } catch (error) {
+    console.error('Erro ao remover pergunta:', error);
+  }
 }
 
-limparBtn.addEventListener('click', async () => {
-  if (confirm('Tem certeza que deseja apagar todas as perguntas?')) {
-    await fetch(scriptURL + '?limpar=true');
-    carregarPerguntas();
+// Botão para remover pergunta destacada
+btnRemoverDestaque.addEventListener('click', async () => {
+  if (perguntaDestacada) {
+    try {
+      // Encontrar o índice da pergunta destacada
+      const res = await fetch(scriptURL);
+      const data = await res.json();
+      const index = data.perguntas.findIndex(p => p.destaque === 'true');
+      
+      if (index !== -1) {
+        await fetch(scriptURL + '?remover=' + index);
+        carregarPerguntas(); // Sem delay
+      }
+    } catch (error) {
+      console.error('Erro ao remover pergunta destacada:', error);
+    }
   }
 });
 
-setInterval(carregarPerguntas, 2000);
-carregarPerguntas();
+limparBtn.addEventListener('click', async () => {
+  if (confirm('Tem certeza que deseja apagar todas as perguntas?')) {
+    try {
+      await fetch(scriptURL + '?limpar=true');
+      carregarPerguntas(); // Sem delay
+    } catch (error) {
+      console.error('Erro ao limpar perguntas:', error);
+    }
+  }
+});
 
+// Carregamento sem delay
+setInterval(carregarPerguntas, 1000);
+carregarPerguntas(); // Carregamento inicial imediato
