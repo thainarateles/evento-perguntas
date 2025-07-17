@@ -58,13 +58,29 @@ async function carregarPerguntas() {
   }
 
   // Lista todas as perguntas
-  lista.innerHTML = '';
-  perguntasParaExibir.forEach(p => {
+  // Gera uma chave única para cada pergunta (pode ser ajustado conforme necessidade)
+function gerarChave(p) {
+  return `${p.nome}-${p.pergunta}`;
+}
+
+// Cria um Set com as chaves das perguntas já exibidas
+const perguntasExistentes = new Set();
+lista.querySelectorAll('li').forEach(li => {
+  perguntasExistentes.add(li.getAttribute('data-chave'));
+});
+
+// Adiciona apenas perguntas novas
+perguntasParaExibir.forEach(p => {
+  const chave = gerarChave(p);
+  if (!perguntasExistentes.has(chave)) {
     const li = document.createElement('li');
     li.className = 'list-group-item';
+    li.setAttribute('data-chave', chave);
     li.innerHTML = `<strong>${p.nome}:</strong> ${p.pergunta}`;
     lista.appendChild(li);
-  });
+  }
+});
+
 }
 
 // Atualiza a cada 5 segundos
