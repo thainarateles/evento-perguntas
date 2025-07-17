@@ -31,26 +31,22 @@ async function carregarPerguntas() {
   const res = await fetch(scriptURL);
   const data = await res.json();
 
-  // Remove pergunta pendente se já estiver no servidor
-  if (perguntaPendente) {
-  const existe = data.perguntas.some(p =>
-    p.nome === perguntaPendente.nome &&
-    p.pergunta === perguntaPendente.pergunta
-  );
-
-  // Só apaga se tiver certeza que chegou no servidor
-  if (existe) {
-    perguntaPendente = null;
-  } else {
-    // Reinsere no final da lista, mas só se ainda não estiver lá
-    data.perguntas.push(perguntaPendente);
-  }
-}
-
-  // Junta perguntas do servidor + cache
+  // Junta perguntas do servidor + cache (pendente)
   let perguntasParaExibir = [...data.perguntas];
+
+  // Adiciona pendente (se ainda não está no servidor)
   if (perguntaPendente) {
-    perguntasParaExibir.push(perguntaPendente);
+    const existe = perguntasParaExibir.some(p =>
+      p.nome === perguntaPendente.nome &&
+      p.pergunta === perguntaPendente.pergunta
+    );
+
+    if (!existe) {
+      perguntasParaExibir.push(perguntaPendente);
+    } else {
+      // Se já está no servidor, limpamos o cache
+      perguntaPendente = null;
+    }
   }
 
   // Atualiza destaque
@@ -64,31 +60,16 @@ async function carregarPerguntas() {
     `;
   }
 
-  // Lista todas as perguntas
-  // Gera uma chave única para cada pergunta (pode ser ajustado conforme necessidade)
-function gerarChave(p) {
-  return `${p.nome}-${p.pergunta}`;
-}
-
-// Cria um Set com as chaves das perguntas já exibidas
-const perguntasExistentes = new Set();
-lista.querySelectorAll('li').forEach(li => {
-  perguntasExistentes.add(li.getAttribute('data-chave'));
-});
-
-// Adiciona apenas perguntas novas
-perguntasParaExibir.forEach(p => {
-  const chave = gerarChave(p);
-  if (!perguntasExistentes.has(chave)) {
+  // Renderiza lista inteira
+  lista.innerHTML = '';
+  perguntasParaExibir.forEach(p => {
     const li = document.createElement('li');
     li.className = 'list-group-item';
-    li.setAttribute('data-chave', chave);
     li.innerHTML = `<strong>${p.nome}:</strong> ${p.pergunta}`;
     lista.appendChild(li);
-  }
-});
-
+  });
 }
+
 
 // Atualiza a cada 5 segundos
 setInterval(carregarPerguntas, 5000);
