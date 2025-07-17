@@ -33,12 +33,19 @@ async function carregarPerguntas() {
 
   // Remove pergunta pendente se já estiver no servidor
   if (perguntaPendente) {
-    const existe = data.perguntas.some(p =>
-      p.nome === perguntaPendente.nome &&
-      p.pergunta === perguntaPendente.pergunta
-    );
-    if (existe) perguntaPendente = null;
+  const existe = data.perguntas.some(p =>
+    p.nome === perguntaPendente.nome &&
+    p.pergunta === perguntaPendente.pergunta
+  );
+
+  // Só apaga se tiver certeza que chegou no servidor
+  if (existe) {
+    perguntaPendente = null;
+  } else {
+    // Reinsere no final da lista, mas só se ainda não estiver lá
+    data.perguntas.push(perguntaPendente);
   }
+}
 
   // Junta perguntas do servidor + cache
   let perguntasParaExibir = [...data.perguntas];
