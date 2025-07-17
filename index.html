@@ -1,37 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perguntas ao Palestrante</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Público - Perguntas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-light">
-  <div class="container py-4">
-    <header class="mb-4">
-      <h2 id="titulo-palestra">Título da Palestra</h2>
-      <h5 id="nome-palestrante">Palestrante</h5>
-      <p class="text-muted">Envie sua pergunta abaixo</p>
-    </header>
+<body>
+  <section class="header">
+    <h2>Perguntas para o Palestrante</h2>
+    <p>Envie sua pergunta abaixo</p>
+  </section>
 
-    <form id="form-pergunta" class="mb-3">
-      <div class="mb-2">
-        <input type="text" id="nome" class="form-control" placeholder="Seu nome (opcional)">
-      </div>
-      <div class="mb-2">
-        <textarea id="pergunta" class="form-control" rows="3" placeholder="Digite sua pergunta"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">Enviar pergunta</button>
-    </form>
+  <div class="container mt-4">
+    <div class="card p-4 shadow-sm">
+      <form id="form-pergunta">
+        <input type="text" id="nome" class="form-control mb-3" placeholder="Seu nome (opcional)" />
+        <input type="text" id="pergunta" class="form-control mb-3" placeholder="Digite sua pergunta" required />
+        <button type="submit" class="btn btn-primary w-100">Enviar Pergunta</button>
+      </form>
+    </div>
 
-    <div id="pergunta-destacada" class="mb-3"></div>
-
-    <h5>Perguntas enviadas:</h5>
-    <ul id="lista-perguntas" class="list-group"></ul>
+    <div class="card p-4 mt-4 shadow-sm">
+      <h5>Perguntas já enviadas:</h5>
+      <ul id="lista-perguntas" class="list-group mt-2"></ul>
+      <div id="pergunta-destacada"></div>
+      <ul id="lista-perguntas" class="list-group mt-3"></ul>
+    </div>
   </div>
 
-  <script src="sheets.js"></script>
   <script src="script-publico.js"></script>
 </body>
 </html>
