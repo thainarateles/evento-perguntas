@@ -48,6 +48,7 @@ async function carregarPerguntas() {
       perguntaPendente = null;
     }
   }
+  
 
   // Atualiza destaque
   destaqueArea.innerHTML = '';
@@ -59,6 +60,16 @@ async function carregarPerguntas() {
       </div>
     `;
   }
+
+  function mostrarPerguntaDestacada(texto) {
+  const divDestacada = document.getElementById("pergunta-destacada");
+  if (texto) {
+    divDestacada.textContent = texto;
+    divDestacada.classList.remove("d-none");
+  } else {
+    divDestacada.classList.add("d-none");
+  }
+}
 
   // Renderiza lista inteira
   lista.innerHTML = '';
