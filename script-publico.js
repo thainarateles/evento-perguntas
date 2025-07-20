@@ -48,7 +48,6 @@ async function carregarPerguntas() {
       perguntaPendente = null;
     }
   }
-  
 
   // Atualiza destaque
   destaqueArea.innerHTML = '';
@@ -59,28 +58,20 @@ async function carregarPerguntas() {
         <strong>Respondendo agora:</strong> ${perguntaDestacada.nome}: ${perguntaDestacada.pergunta}
       </div>
     `;
-  }
-
-  function mostrarPerguntaDestacada(texto) {
-  const divDestacada = document.getElementById("pergunta-destacada");
-  if (texto) {
-    divDestacada.textContent = texto;
-    divDestacada.classList.remove("d-none");
+    destaqueArea.classList.remove('d-none');
   } else {
-    divDestacada.classList.add("d-none");
+    destaqueArea.classList.add('d-none');
   }
-}
 
-  // Renderiza lista inteira
+  // Renderiza lista inteira (mais recentes primeiro)
   lista.innerHTML = '';
-  perguntasParaExibir.forEach(p => {
+  perguntasParaExibir.reverse().forEach(p => {
     const li = document.createElement('li');
     li.className = 'list-group-item';
     li.innerHTML = `<strong>${p.nome}:</strong> ${p.pergunta}`;
     lista.appendChild(li);
   });
 }
-
 
 // Atualiza a cada 5 segundos
 setInterval(carregarPerguntas, 5000);

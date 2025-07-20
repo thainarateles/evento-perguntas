@@ -8,25 +8,22 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <section class="header">
+  <section class="header text-center p-4 bg-light">
     <h2>Perguntas para o Palestrante</h2>
     <p>Envie sua pergunta abaixo</p>
   </section>
 
   <div class="container mt-4">
-    <div class="card p-4 shadow-sm">
+    <div class="card p-4 shadow-sm mb-4">
       <form id="form-pergunta">
         <input type="text" id="nome" class="form-control mb-3" placeholder="Seu nome (opcional)" />
-        
-        <!-- CAIXA DE TEXTO COM QUEBRA DE LINHA -->
         <textarea id="pergunta" class="form-control mb-3" placeholder="Digite sua pergunta" rows="2" style="max-height: 150px; resize: vertical;" required></textarea>
-        
-        <button type="submit" class="btn btn-primary w-100">Enviar Pergunta</button>
+        <button type="submit" class="btn btn-gradiente">Enviar Pergunta</button>
       </form>
-
-      <!-- PERGUNTA DESTACADA -->
-      <div id="pergunta-destacada" class="alert alert-warning mt-4 d-none"></div>
     </div>
+
+    <!-- PERGUNTA DESTACADA -->
+    <div id="pergunta-destacada" class="alert alert-info d-none"></div>
 
     <div class="card p-4 mt-4 shadow-sm">
       <h5>Perguntas já enviadas:</h5>
